@@ -1,4 +1,6 @@
 import java.util.Locale;
+
+import com.codegym.blog.filter.FontFilter;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -18,6 +20,7 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
+
 
 @Configuration
 @EnableWebMvc
@@ -39,6 +42,7 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter implements Applic
     templateResolver.setPrefix("/WEB-INF/views/");
     templateResolver.setSuffix(".html");
     templateResolver.setTemplateMode(TemplateMode.HTML);
+    templateResolver.setCharacterEncoding("UTF-8");
     return templateResolver;
   }
 
@@ -53,6 +57,7 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter implements Applic
   public ThymeleafViewResolver viewResolver() {
     ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
     viewResolver.setTemplateEngine(templateEngine());
+    viewResolver.setCharacterEncoding("UTF-8");
     return viewResolver;
   }
 
@@ -63,6 +68,7 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter implements Applic
     return messageSource;
   }
 
+  //tự động phân tích tham số lang đi kèm các request để xác định bản địa hiện tại.
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
     LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
@@ -70,11 +76,18 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter implements Applic
     registry.addInterceptor(interceptor);
   }
 
+  //sử dụng thông tin về bản địa và sử dụng message bundle tương ứng:
   @Bean
   public LocaleResolver localeResolver() {
     SessionLocaleResolver localeResolver = new SessionLocaleResolver();
     localeResolver.setDefaultLocale(new Locale("en"));
     return localeResolver;
   }
+
+  @Bean
+  public FontFilter fontFilter(){
+    return new FontFilter();
+  }
+
 
 }
